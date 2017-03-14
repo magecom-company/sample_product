@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magecom
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@magecom.net so we can send you a copy immediately.
+ *
+ * @category Magecom
+ * @package Magecom_Sampleorder
+ * @copyright Copyright (c) 2015 Magecom, Inc. (http://www.magecom.net)
+ * @license  http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */-->
+<config>
+    <modules>
+        <Magecom_Sampleorder>
+            <version>1.0.0</version>
+        </Magecom_Sampleorder>
+    </modules>
+    <adminhtml>
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <sampleorder_section>
+                                            <title>Magecom Sampleorder</title>
+                                        </sampleorder_section>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+    <frontend>
+        <routers>
+            <magecom_sampleorder>
+                <use>standard</use>
+                <args>
+                    <module>Magecom_Sampleorder</module>
+                    <frontName>sampleorder</frontName>
+                </args>
+            </magecom_sampleorder>
+        </routers>
+        <layout>
+            <updates>
+                <magecom_sampleorder>
+                    <file>magecom/magecom_sampleorder.xml</file>
+                </magecom_sampleorder>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <helpers>
+            <magecom_sampleorder>
+                <class>Magecom_Sampleorder_Helper</class>
+            </magecom_sampleorder>
+        </helpers>
+        <blocks>
+            <magecom_sampleorder>
+                <class>Magecom_Sampleorder_Block</class>
+            </magecom_sampleorder>
+        </blocks>
+        <resources>
+            <magecom_sampleorder_setup>
+                <setup>
+                    <module>Magecom_Sampleorder</module>
+                    <class>Mage_Catalog_Model_Resource_Setup</class>
+                </setup>
+            </magecom_sampleorder_setup>
+        </resources>
+    </global>
+    <default>
+        <sampleorder_section>
+            <general_group>
+                <price>0</price>
+            </general_group>
+        </sampleorder_section>
+    </default>
+</config>

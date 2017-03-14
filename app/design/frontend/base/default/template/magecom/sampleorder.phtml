@@ -1,0 +1,182 @@
+<?php
+/**
+ * Magecom
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@magecom.net so we can send you a copy immediately.
+ *
+ * @category    Design
+ * @package     Magecom_Sampleorder
+ * @copyright Copyright (c) 2015 Magecom, Inc. (http://www.magecom.net)
+ * @license  http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+
+/** @var $this Magecom_Sampleorder_Block_Sampleorder */
+?>
+<script type="text/javascript">
+//<![CDATA[
+    <?php if ($this->product->getTypeId() == Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE): ?>
+    var simpProdId = 0;
+
+    spConfig.getIdOfSelectedProductForSample = function() {
+        var existingProducts = new Object();
+
+        for (var i = this.settings.length - 1; i >= 0; i--) {
+            var selected = this.settings[i].options[this.settings[i].selectedIndex];
+            if (selected.config) {
+                for (var iproducts = 0; iproducts < selected.config.products.length; iproducts++) {
+                    var usedAsKey = selected.config.products[iproducts] + "";
+                    if (existingProducts[usedAsKey] == undefined) {
+                        existingProducts[usedAsKey] = 1;
+                    } else {
+                        existingProducts[usedAsKey] = existingProducts[usedAsKey] + 1;
+                    }
+                }
+            }
+        }
+
+        for (var keyValue in existingProducts) {
+            for ( var keyValueInner in existingProducts) {
+                if (Number(existingProducts[keyValueInner]) < Number(existingProducts[keyValue])) {
+                    delete existingProducts[keyValueInner];
+                }
+            }
+        }
+
+        var sizeOfExistingProducts = 0;
+        var currentSimpleProductId = "";
+
+        for ( var keyValue in existingProducts) {
+            currentSimpleProductId = keyValue;
+            sizeOfExistingProducts = sizeOfExistingProducts + 1;
+        }
+
+        if (sizeOfExistingProducts == 1) {
+            var url = '<?php echo Mage::getBaseUrl() . 'sampleorder/index/checkSample/' ?>';
+            new Ajax.Request(url, {
+                method: 'get',
+                parameters: {productId: currentSimpleProductId},
+                requestHeaders: {Accept: 'application/json'},
+                onSuccess: function (transport) {
+                    retjson = transport.responseText.evalJSON();
+                    if (retjson.message == 'ok') {
+                        document.getElementById("bySampleLink").innerHTML =
+                    '<a href="javascript:void(0)" onclick="addSampleConfig('+currentSimpleProductId+');" id="add-sample-link"><?php echo Mage::helper('magecom_sampleorder')->__('Buy Sample') ?></a>'
+                    } else {
+                        document.getElementById("bySampleLink").innerHTML = '';
+                    }
+                },
+                onFailure: function () {
+                    alert('error');
+                }
+            });
+        } else {
+            document.getElementById("bySampleLink").innerHTML = '';
+        }
+    };
+
+    $$('.product-options .super-attribute-select').each(function(element) {
+        element.on("change", function(event) {
+            // Reset link
+            document.getElementById("bySampleLink").innerHTML = '';
+            // Check empty options
+            var allOptions = true;
+            $$('.product-options .super-attribute-select').each(function(element) {
+                if (!element.selectedIndex) {
+                    allOptions = false;
+                    throw $break;
+                }
+            });
+            if (allOptions) {
+                spConfig.getIdOfSelectedProductForSample();
+            }
+        });
+    });
+    <?php endif; ?>
+
+    // Configurable product dropdowns
+    jQuery('.product-custom-option').on("click", function(event) {
+        jQuery('#add-sample-link').show();
+        jQuery.each(jQuery('.required-entry.product-custom-option'), function(index, element) {
+            if (element.selectedIndex == 0) {
+                jQuery('#add-sample-link').hide();
+            }
+        });
+    });
+
+    // Configurable product swatches
+    jQuery(document).ready(function () {
+        jQuery('.swatch-link').on("click", function (event) {
+            spConfig.getIdOfSelectedProductForSample();
+            jQuery('#bySampleLink').show();
+
+            jQuery.each(jQuery('.required-entry.super-attribute-select'), function(index, element) {
+                if (element.selectedIndex == 0) {
+                    jQuery('#bySampleLink').hide();
+                }
+            });
+        });
+    });
+
+
+    function addSample() {
+        showLoader();
+        jQuery.ajax({
+            type: "POST",
+            url: "<?php echo Mage::getBaseUrl() ?>sampleorder/index/index/prodId/<?php echo $this->productId ?>",
+            data: "form="+jQuery('#product_addtocart_form').serialize(),
+            success: function(msg) {
+                window.location.href = '<?php echo Mage::helper('checkout/cart')->getCartUrl(); ?>';
+            }
+        });
+    }
+
+    function addSampleConfig(productId) {
+        showLoader();
+        var productPrice = getCurrentProductPrice();
+        jQuery.ajax({
+            type: "POST",
+            url: "<?php echo Mage::getBaseUrl() ?>sampleorder/index/index/prodId/"+productId+"/price/"+productPrice,
+            success: function(msg) {
+                window.location.href = '<?php echo Mage::helper('checkout/cart')->getCartUrl(); ?>';
+            }
+        });
+    }
+
+    function getCurrentProductPrice() {
+        var price = 0.00;
+        if (parseFloat(jQuery('.regular-price .price').html().replace(/[^.0-9]/gim,''))) {
+            price = parseFloat(jQuery('.regular-price .price').html().replace(/[^.0-9]/gim,''));
+            return price;
+        }
+
+        if (parseFloat(jQuery('.special-price .price').html().replace(/[^.0-9]/gim,''))) {
+            price = parseFloat(jQuery('.special-price .price').html().replace(/[^.0-9]/gim,''));
+            return price;
+        }
+    }
+
+    function showLoader() {
+        jQuery('#add-sample-link').hide();
+        jQuery('#load-gif').show();
+    }
+//]]>
+</script>
+
+<?php if ($this->product->getTypeId() == 'configurable'): ?>
+    <div id="bySampleLink"></div>
+<?php endif ?>
+
+<?php if ($this->product->getTypeId() == 'simple' && $this->product->getHasSample() && $this->product->getHasOptions()!='1') : ?>
+    <a href="<?php echo Mage::getBaseUrl() ?>sampleorder/index/index/prodId/<?php echo $this->productId ?>"><?php echo Mage::helper('magecom_sampleorder')->__('Buy Sample') ?></a>
+<?php elseif (($this->product->getTypeId() == 'simple' && $this->product->getHasSample() && $this->product->getHasOptions() == '1')): ?>
+    <a href="javascript:void(0)" onclick="addSample();" id="add-sample-link" style="<?php echo $this->product->getHasOptions() == '1' ? 'display: none;': '' ?>"><?php echo Mage::helper('magecom_sampleorder')->__('Buy Sample') ?></a>
+<?php endif; ?>
+<img id="load-gif" style="display: none;" src="<?php echo $this->getSkinUrl('images/opc-ajax-loader.gif'); ?>">

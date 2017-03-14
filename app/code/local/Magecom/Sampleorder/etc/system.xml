@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Magecom
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to info@magecom.net so we can send you a copy immediately.
+ *
+ * @category Magecom
+ * @package Magecom_Sampleorder
+ * @copyright Copyright (c) 2015 Magecom, Inc. (http://www.magecom.net)
+ * @license  http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */-->
+<config>
+    <tabs>
+        <magecom translate="label" module="magecom_sampleorder">
+            <label>Magecom</label>
+            <sort_order>400</sort_order>
+        </magecom>
+    </tabs>
+    <sections>
+        <sampleorder_section translate="label" module="magecom_sampleorder">
+            <label>Sample product</label>
+            <tab>magecom</tab>
+            <frontend_type>text</frontend_type>
+            <sort_order>1000</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <general_group translate="label">
+                    <label>General</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <price>
+                            <label>Sample Price</label>
+                            <frontend_type>text</frontend_type>
+                            <validate>validate-number</validate>
+                            <comment>It's default value of sample price.</comment>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </price>
+                    </fields>
+                </general_group>
+                <category_price translate="label">
+                    <label>Price depending on the category</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>10</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <price_depending_category translate="label">
+                            <label>Price depending on the category</label>
+                            <frontend_model>magecom_sampleorder/Categoryprice</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </price_depending_category>
+                    </fields>
+                </category_price>
+            </groups>
+        </sampleorder_section>
+    </sections>
+</config>
